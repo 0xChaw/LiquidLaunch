@@ -19,6 +19,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@fontsource/ibm-plex-mono": "^5.1.0",
     "@fontsource/inter": "^5.1.0",
+    "@metamask/detect-provider": "^2.0.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@uniswap/sdk-core": "^5.9.0",
     "@uniswap/token-lists": "^1.0.0-beta.34",

@@ -1,10 +1,12 @@
-import './styles/fonts';
 import { DynamicContextProvider, DynamicWidget } from '@dynamic-labs/sdk-react-core';
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import LaunchpadPage from './pages/LaunchpadPage';
 import CreateListingPage from './pages/CreateListingPage';
 import { providers } from 'ethers';
+import { useState } from 'react';
+import { ethers } from 'ethers';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 const Header = () => (
   <header style={{ 
@@ -200,20 +202,22 @@ export const buttonStyle = {
   transition: 'background-color 0.2s'
 };
 
-const App = () => (
-  <BrowserRouter>
-    <DynamicContextProvider
-      settings={{
-        environmentId: import.meta.env.VITE_DYNAMIC_ENV_ID,
-        walletConnectors: [EthereumWalletConnectors],
-      }}
-    >
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/app/*" element={<AppLayout />} />
-      </Routes>
-    </DynamicContextProvider>
-  </BrowserRouter>
-);
+const App = () => {
+  return (
+    <BrowserRouter>
+      <DynamicContextProvider
+        settings={{
+          environmentId: import.meta.env.VITE_DYNAMIC_ENV_ID,
+          walletConnectors: [EthereumWalletConnectors],
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/app/*" element={<AppLayout />} />
+        </Routes>
+      </DynamicContextProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;

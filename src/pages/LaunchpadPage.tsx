@@ -1,152 +1,137 @@
-import { Box } from '@chakra-ui/react';
-import { SwapWidget, Theme } from '@uniswap/widgets';
-import { useState } from 'react';
+import { SwapWidget } from '@uniswap/widgets';
+import { ethers } from 'ethers';
 import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
-import { TokenInfo } from '@uniswap/token-lists';
-
-// Add Browser polyfill
-if (typeof window !== "undefined") {
-  // @ts-ignore
-  window.Browser = {
-    T: () => {}
-  };
-}
+import { useState } from 'react';
 
 const LaunchpadPage = () => {
   const [showSwapWidget, setShowSwapWidget] = useState(false);
   const { primaryWallet } = useDynamicContext();
 
-  const jsonRpcUrlMap = {
-    1: [`https://mainnet.infura.io/v3/${import.meta.env.VITE_INFURA_PROJECT_ID}`]
-  };
+  const provider = primaryWallet?.connector ? (primaryWallet.connector as any).provider : undefined;
 
-  const tokens: TokenInfo[] = [
+  const TOKEN_LIST = [
     {
-      chainId: 1,
-      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      name: 'Wrapped Ether',
-      symbol: 'WETH',
-      decimals: 18,
-      logoURI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png'
+      "name": "Wrapped Ether",
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "symbol": "WETH",
+      "decimals": 18,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
     },
     {
-      chainId: 1,
-      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      name: 'Tether USD',
-      symbol: 'USDT',
-      decimals: 6,
-      logoURI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png'
+      "name": "Tether USD",
+      "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "symbol": "USDT",
+      "decimals": 6,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
+      "name": "USD Coin",
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "symbol": "USDC",
+      "decimals": 6,
+      "chainId": 1,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
     }
   ];
 
-  const provider = primaryWallet?.connector ? (primaryWallet.connector as any).provider : undefined;
-
-  const darkTheme: Theme = {
-    primary: '#FFF',
-    secondary: '#94a3b8',
-    interactive: '#3B82F6',
-    container: '#0B1120',
-    module: '#1A1F2E',
-    accent: '#3B82F6',
-    outline: 'rgba(255, 255, 255, 0.1)',
-    dialog: '#0B1120',
-    fontFamily: 'Inter',
-    borderRadius: {
-      xsmall: 4,
-      small: 8,
-      medium: 12,
-      large: 20
-    }
-  };
-
   return (
     <div style={{
-      padding: '3rem',
+      padding: '1.5rem 2rem',
       backgroundColor: '#0B1120',
+      maxWidth: '1200px',
+      margin: '0 auto',
     }}>
-      <h2 style={{ color: 'white', marginBottom: '2rem', fontSize: '1.5rem' }}>Active Launches</h2>
-      <table style={{ 
-        width: '100%', 
-        borderCollapse: 'collapse', 
-        marginTop: '1rem',
+      <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.25rem' }}>Active Launches</h2>
+      <div style={{ 
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: '8px',
+        padding: '1.5rem',
+        width: '100%',
       }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Name</th>
-            <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage</th>
-            <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Current Price</th>
-            <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Status</th>
-            <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Alpha</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage 1</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>0.00001 ETH</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Active</td>
-            <td style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <button 
-                onClick={() => setShowSwapWidget(true)}
-                className="uniswap-button">
-                Buy Now
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Beta</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage 2</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>0.00002 ETH</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Active</td>
-            <td style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <button 
-                onClick={() => setShowSwapWidget(true)}
-                className="uniswap-button">
-                Buy Now
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Gamma</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage 3</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>0.00005 ETH</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Active</td>
-            <td style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <button 
-                onClick={() => setShowSwapWidget(true)}
-                className="uniswap-button">
-                Buy Now
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Delta</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage 1</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>0.00001 ETH</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Active</td>
-            <td style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <button 
-                onClick={() => setShowSwapWidget(true)}
-                className="uniswap-button">
-                Buy Now
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Project Epsilon</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Stage 2</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>0.00002 ETH</td>
-            <td style={{ padding: '1rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>Active</td>
-            <td style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <button 
-                onClick={() => setShowSwapWidget(true)}
-                className="uniswap-button">
-                Buy Now
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table style={{ 
+          width: '100%', 
+          borderCollapse: 'collapse',
+        }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'left', padding: '0.75rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Name</th>
+              <th style={{ textAlign: 'left', padding: '0.75rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage</th>
+              <th style={{ textAlign: 'left', padding: '0.75rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Current Price</th>
+              <th style={{ textAlign: 'left', padding: '0.75rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Status</th>
+              <th style={{ textAlign: 'left', padding: '0.75rem', color: '#94a3b8', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Alpha</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage 1</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>0.00001 ETH</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Active</td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button 
+                  onClick={() => setShowSwapWidget(true)}
+                  className="uniswap-button">
+                  Buy Now
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Beta</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage 2</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>0.00002 ETH</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Active</td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button 
+                  onClick={() => setShowSwapWidget(true)}
+                  className="uniswap-button">
+                  Buy Now
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Gamma</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage 3</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>0.00005 ETH</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Active</td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button 
+                  onClick={() => setShowSwapWidget(true)}
+                  className="uniswap-button">
+                  Buy Now
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Delta</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage 1</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>0.00001 ETH</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Active</td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button 
+                  onClick={() => setShowSwapWidget(true)}
+                  className="uniswap-button">
+                  Buy Now
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Project Epsilon</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Stage 2</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>0.00002 ETH</td>
+              <td style={{ padding: '0.75rem', color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '0.875rem' }}>Active</td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button 
+                  onClick={() => setShowSwapWidget(true)}
+                  className="uniswap-button">
+                  Buy Now
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       {showSwapWidget && (
         <div style={{
@@ -168,6 +153,7 @@ const LaunchpadPage = () => {
             borderRadius: '12px',
             maxWidth: '480px',
             width: '100%',
+            isolation: 'isolate',
           }}>
             <button 
               onClick={() => setShowSwapWidget(false)}
@@ -193,17 +179,30 @@ const LaunchpadPage = () => {
             >
               ×
             </button>
-            <SwapWidget 
-              provider={provider}
-              jsonRpcUrlMap={jsonRpcUrlMap}
-              tokenList={tokens}
-              theme={darkTheme}
-              width={440}
-              defaultInputTokenAddress="NATIVE"
-              defaultOutputTokenAddress="0xdAC17F958D2ee523a2206206994597C13D831ec7"
-              hideConnectionUI={true}
-              brandedFooter={false}
-            />
+            <div style={{ all: 'initial' }}>
+              <SwapWidget 
+                provider={provider}
+                tokenList={TOKEN_LIST}
+                width={440}
+                defaultInputAmount="0.1"
+                defaultInputTokenAddress="NATIVE"
+                defaultOutputTokenAddress="0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                hideConnectionUI={true}
+                brandedFooter={false}
+                defaultChainId={1}
+                theme={{
+                  primary: '#FFFFFF',
+                  secondary: '#888D9B',
+                  interactive: '#2D2D39',
+                  container: '#191924',
+                  module: '#191924',
+                  accent: '#2172E5',
+                  outline: '#313145',
+                  dialog: '#191924',
+                  fontFamily: 'Inter'
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

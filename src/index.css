@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -73,6 +75,60 @@ button, a {
   }
 }
 
+.menu-link {
+  transition: background-color 0.2s;
+}
+
+.menu-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px;
+}
+
+.logo-text:hover {
+  color: #FC72FF !important;
+}
+
+/* MetaMask specific notifications only */
+div[class*="metamask-notification"],
+div[id*="metamask-notification"],
+div[class*="MetaMask-notification"],
+div[id*="MetaMask-notification"],
+.metamask-notification,
+#metamask-notification,
+.MetaMaskNotification,
+#MetaMaskNotification,
+div[data-testid*="metamask-notification"],
+div[data-testid*="MetaMask-notification"],
+.metamask-connect-button,
+.metamask-overlay,
+#METAMASK_NOTIFICATIONS_CONTAINER,
+#METAMASK_NOTIFICATIONS,
+.metamask-portal {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -99999 !important;
+}
+
+/* Only target MetaMask's fixed position elements at the bottom */
+div[class*="metamask"][style*="position: fixed"][style*="bottom"],
+div[class*="MetaMask"][style*="position: fixed"][style*="bottom"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Target MetaMask's iframe */
+iframe[style*="position: fixed"],
+iframe[class*="metamask"],
+iframe[id*="metamask"],
+iframe[src*="metamask"],
+iframe {
+  display: none !important;
+  visibility: hidden !important;
+}
+
 .uniswap-button {
   background-color: #FC72FF;
   color: white;
@@ -97,17 +153,4 @@ button, a.button {
 
 button:hover, a.button:hover {
   background-color: #FB118E !important;
-}
-
-.menu-link {
-  transition: background-color 0.2s;
-}
-
-.menu-link:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 6px;
-}
-
-.logo-text:hover {
-  color: #FC72FF !important;
 }
