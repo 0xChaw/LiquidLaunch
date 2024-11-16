@@ -66,3 +66,48 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+button, a {
+  &:hover {
+    background-color: #FB118E !important;
+  }
+}
+
+.uniswap-button {
+  background-color: #FC72FF;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.uniswap-button:hover {
+  background-color: #FB118E;
+}
+
+button, a.button {
+  background-color: #FC72FF !important;
+  color: white !important;
+  transition: background-color 0.2s;
+}
+
+button:hover, a.button:hover {
+  background-color: #FB118E !important;
+}
+
+.menu-link {
+  transition: background-color 0.2s;
+}
+
+.menu-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px;
+}
+
+.logo-text:hover {
+  color: #FC72FF !important;
+}
